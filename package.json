@@ -1,0 +1,24 @@
+{
+  "name": "eventhub",
+  "version": "1.0.0",
+  "description": "Smart Event Management & Ticketing Platform — Advanced Events (Pty) Ltd",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "seed": "node seed.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "mongodb": "^7.2.0",
+    "mongoose": "^8.0.0",
+    "multer": "^2.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
