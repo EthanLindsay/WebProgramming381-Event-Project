@@ -1,0 +1,113 @@
+<%- include('../partials/admin-header') %>
+
+<% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+
+<div class="admin-card" style="max-width:800px;">
+  <div class="admin-card-header">
+    <h2>Edit: <%= event.title %></h2>
+    <a href="/admin/events" class="btn btn-outline btn-sm">Back to Events</a>
+  </div>
+  <div class="admin-card-body">
+
+    <form action="/admin/events/<%= event._id %>/edit" method="POST" enctype="multipart/form-data" novalidate>
+      <!-- Hidden flag — set to '1' by the Remove Image button -->
+      <input type="hidden" name="removeImage" id="removeImageField" value="0" />
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Event Title</label>
+          <input type="text" name="title" class="form-input" required value="<%= event.title %>" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select name="category" class="form-input" required>
+            <% categories.forEach(cat => { %>
+              <option value="<%= cat %>" <%= event.category === cat ? 'selected' : '' %>><%= cat %></option>
+            <% }) %>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-input" required rows="4"><%= event.description %></textarea>
+      </div>
+
+      <div class="form-row-3">
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="date" name="date" class="form-input" required
+            value="<%= new Date(event.date).toISOString().split('T')[0] %>" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Time</label>
+          <input type="time" name="time" class="form-input" required value="<%= event.time %>" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Location / Venue</label>
+          <input type="text" name="location" class="form-input" required value="<%= event.location %>" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Ticket Price (R)</label>
+          <input type="number" name="price" class="form-input" required min="0" step="0.01" value="<%= event.price %>" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Total Capacity</label>
+          <input type="number" name="capacity" class="form-input" required
+            min="<%= event.bookedCount %>" value="<%= event.capacity %>" />
+          <span class="form-hint">Minimum: <%= event.bookedCount %> (current bookings)</span>
+        </div>
+      </div>
+
+      <!-- Image section -->
+      <div class="form-group">
+        <label class="form-label">Event Image</label>
+
+        <div class="edit-image-row">
+          <!-- Current image -->
+          <div class="edit-image-current">
+            <img id="editPreview" src="<%= event.image %>" alt="Current image" class="upload-preview" style="display:block;margin:0;" />
+            <button type="button" class="btn btn-danger btn-sm" style="margin-top:10px;" onclick="removeImage()">
+              Remove Image
+            </button>
+          </div>
+
+          <!-- Replace -->
+          <div style="flex:1;">
+            <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:10px;">
+              Upload a new image to replace the current one, or click Remove Image to reset to the placeholder.
+            </p>
+            <div class="file-input-wrapper">
+              <input type="file" name="image" id="editImage" accept="image/jpeg,image/png,image/webp"
+                class="file-input" onchange="previewImage(this,'editPreview')" />
+              <label for="editImage" class="file-input-label">Replace image</label>
+              <span class="file-input-name">No file chosen</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:8px;">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="/admin/events" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<script>
+  function removeImage() {
+    document.getElementById('removeImageField').value = '1';
+    const preview = document.getElementById('editPreview');
+    preview.src = '/images/placeholder.jpg';
+    // Clear any newly selected file by resetting the input
+    document.getElementById('editImage').value = '';
+    document.querySelector('.file-input-name').textContent = 'No file chosen';
+  }
+</script>
+
+<%- include('../partials/admin-footer') %>

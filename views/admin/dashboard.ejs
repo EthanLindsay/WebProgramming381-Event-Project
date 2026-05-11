@@ -1,0 +1,161 @@
+<%- include('../partials/admin-header') %>
+
+<% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+<% if (error)   { %><div class="alert alert-error"><%= error %></div><% } %>
+
+<!-- Stats row -->
+<div class="stats-grid" style="margin-bottom:32px;">
+  <div class="stat-card stat-card--accent">
+    <div class="stat-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+    </div>
+    <div>
+      <div class="stat-label">Total Events</div>
+      <div class="stat-value"><%= stats.totalEvents %></div>
+    </div>
+  </div>
+
+  <div class="stat-card stat-card--blue">
+    <div class="stat-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="stat-label">Registered Users</div>
+      <div class="stat-value"><%= stats.totalUsers %></div>
+    </div>
+  </div>
+
+  <div class="stat-card stat-card--green">
+    <div class="stat-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 11 12 14 22 4"/>
+        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+      </svg>
+    </div>
+    <div>
+      <div class="stat-label">Confirmed Bookings</div>
+      <div class="stat-value"><%= stats.totalBookings %></div>
+    </div>
+  </div>
+
+  <div class="stat-card stat-card--orange">
+    <div class="stat-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+    </div>
+    <div>
+      <div class="stat-label">Total Revenue</div>
+      <div class="stat-value">R&nbsp;<%= stats.totalRevenue.toFixed(2) %></div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick actions -->
+<div class="admin-quick-actions">
+  <a href="/admin/events" class="admin-action-card">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+    </svg>
+    Add New Event
+  </a>
+  <a href="/admin/enquiries" class="admin-action-card">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+      <polyline points="22,6 12,13 2,6"/>
+    </svg>
+    View Enquiries
+  </a>
+  <a href="/events" target="_blank" class="admin-action-card">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+    </svg>
+    View Live Site
+  </a>
+</div>
+
+<!-- Tables row -->
+<div class="dashboard-grid">
+
+  <!-- Popular events -->
+  <div class="admin-table-card">
+    <div class="admin-table-card-header">
+      <h2>Most Booked Events</h2>
+    </div>
+    <% if (popularEvents.length === 0) { %>
+      <div class="empty-state" style="padding:40px;">
+        <p>No events yet.</p>
+        <a href="/admin/events" class="btn btn-primary btn-sm" style="margin-top:12px;">Create one</a>
+      </div>
+    <% } else { %>
+      <table>
+        <thead><tr><th>Event</th><th>Category</th><th>Fill</th></tr></thead>
+        <tbody>
+          <% popularEvents.forEach(event => { %>
+            <% const pct = Math.round((event.bookedCount / event.capacity) * 100); %>
+            <tr>
+              <td>
+                <strong><%= event.title %></strong>
+                <div style="font-size:0.8rem;color:var(--text-muted);">
+                  <%= new Date(event.date).toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'}) %>
+                </div>
+              </td>
+              <td>
+                <span class="event-category-badge badge-<%= event.category.toLowerCase() %>" style="position:static;">
+                  <%= event.category %>
+                </span>
+              </td>
+              <td style="min-width:120px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div class="capacity-bar" style="flex:1;">
+                    <div class="capacity-fill <%= pct<50?'low':pct<80?'medium':'high' %>" style="width:<%= pct %>%"></div>
+                  </div>
+                  <span style="font-size:0.8rem;font-weight:600;color:var(--text-muted);white-space:nowrap;"><%= pct %>%</span>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+  <!-- Recent bookings -->
+  <div class="admin-table-card">
+    <div class="admin-table-card-header">
+      <h2>Recent Bookings</h2>
+    </div>
+    <% if (recentBookings.length === 0) { %>
+      <div class="empty-state" style="padding:40px;"><p>No bookings yet.</p></div>
+    <% } else { %>
+      <table>
+        <thead><tr><th>User</th><th>Event</th><th>Qty</th></tr></thead>
+        <tbody>
+          <% recentBookings.forEach(b => { %>
+            <tr>
+              <td>
+                <strong><%= b.user ? b.user.name : '—' %></strong>
+                <div style="font-size:0.8rem;color:var(--text-muted);"><%= b.user ? b.user.email : '' %></div>
+              </td>
+              <td style="font-size:0.875rem;">
+                <% if (b.event) { %><a href="/events/<%= b.event._id %>"><%= b.event.title %></a>
+                <% } else { %><span style="color:var(--text-muted);">Deleted</span><% } %>
+              </td>
+              <td><strong><%= b.ticketCount %></strong></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+</div><!-- /.dashboard-grid -->
+
+<%- include('../partials/admin-footer') %>

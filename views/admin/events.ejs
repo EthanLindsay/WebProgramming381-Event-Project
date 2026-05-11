@@ -1,0 +1,151 @@
+<%- include('../partials/admin-header') %>
+
+<% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+<% if (error)   { %><div class="alert alert-error"><%= error %></div><% } %>
+
+<!-- Create Event Form -->
+<div class="admin-card" style="margin-bottom:32px;">
+  <div class="admin-card-header">
+    <h2>Add New Event</h2>
+  </div>
+  <div class="admin-card-body">
+    <form action="/admin/events" method="POST" enctype="multipart/form-data" novalidate>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Event Title</label>
+          <input type="text" name="title" class="form-input" required placeholder="e.g. Tech Innovators Summit" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select name="category" class="form-input" required>
+            <option value="" disabled selected>Select category</option>
+            <% categories.forEach(cat => { %>
+              <option value="<%= cat %>"><%= cat %></option>
+            <% }) %>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-input" required rows="3" placeholder="Describe the event..."></textarea>
+      </div>
+
+      <div class="form-row-3">
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="date" name="date" class="form-input" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Time</label>
+          <input type="time" name="time" class="form-input" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Location / Venue</label>
+          <input type="text" name="location" class="form-input" required placeholder="e.g. Cape Town ICC" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Ticket Price (R)</label>
+          <input type="number" name="price" class="form-input" required min="0" step="0.01" placeholder="0.00 for free" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Total Capacity</label>
+          <input type="number" name="capacity" class="form-input" required min="1" placeholder="e.g. 500" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Event Image <span style="font-weight:400;color:var(--text-muted);">(JPG/PNG/WebP, max 5 MB)</span></label>
+        <div class="file-input-wrapper">
+          <input type="file" name="image" id="createImage" accept="image/jpeg,image/png,image/webp" class="file-input" onchange="previewImage(this,'createPreview')" />
+          <label for="createImage" class="file-input-label">Choose image</label>
+          <span class="file-input-name">No file chosen</span>
+        </div>
+        <img id="createPreview" src="" alt="Preview" class="upload-preview" style="display:none;" />
+      </div>
+
+      <button type="submit" class="btn btn-primary">Create Event</button>
+    </form>
+  </div>
+</div>
+
+<!-- Events table -->
+<div class="admin-table-card">
+  <div class="admin-table-card-header">
+    <h2>All Events <span class="admin-count-badge"><%= events.length %></span></h2>
+  </div>
+
+  <% if (events.length === 0) { %>
+    <div class="empty-state" style="padding:60px;">
+      <h3>No events yet</h3>
+      <p>Use the form above to create your first event.</p>
+    </div>
+  <% } else { %>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Category</th>
+            <th>Date</th>
+            <th>Price</th>
+            <th>Capacity</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% events.forEach(event => { %>
+            <% const pct = Math.round((event.bookedCount / event.capacity) * 100); %>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div class="admin-event-thumb">
+                    <img src="<%= event.image %>" alt="<%= event.title %>" />
+                  </div>
+                  <div>
+                    <strong><%= event.title %></strong>
+                    <div style="font-size:0.8rem;color:var(--text-muted);"><%= event.location %></div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="event-category-badge badge-<%= event.category.toLowerCase() %>" style="position:static;">
+                  <%= event.category %>
+                </span>
+              </td>
+              <td style="white-space:nowrap;font-size:0.875rem;">
+                <%= new Date(event.date).toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'}) %>
+              </td>
+              <td style="font-weight:600;color:var(--accent);">
+                <%= event.price === 0 ? 'Free' : 'R ' + event.price.toFixed(2) %>
+              </td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:0.875rem;font-weight:600;"><%= event.bookedCount %>/<%= event.capacity %></span>
+                  <div class="capacity-bar" style="width:60px;">
+                    <div class="capacity-fill <%= pct<50?'low':pct<80?'medium':'high' %>" style="width:<%= pct %>%"></div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div style="display:flex;gap:8px;">
+                  <a href="/admin/events/<%= event._id %>/edit" class="btn btn-outline btn-sm">Edit</a>
+                  <form action="/admin/events/<%= event._id %>/delete" method="POST"
+                        onsubmit="return confirm('Delete this event and all its bookings?')">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/admin-footer') %>

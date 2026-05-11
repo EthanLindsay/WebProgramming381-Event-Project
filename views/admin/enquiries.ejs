@@ -1,0 +1,81 @@
+<%- include('../partials/admin-header') %>
+
+<% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+<% if (error)   { %><div class="alert alert-error"><%= error %></div><% } %>
+
+<div class="admin-table-card">
+  <div class="admin-table-card-header">
+    <h2>All Enquiries <span class="admin-count-badge"><%= enquiries.length %></span></h2>
+  </div>
+
+  <% if (enquiries.length === 0) { %>
+    <div class="empty-state" style="padding:72px;">
+      <h3>No enquiries yet</h3>
+      <p>User submissions from the contact page will appear here.</p>
+    </div>
+  <% } else { %>
+
+    <!-- Summary pills -->
+    <div style="padding:16px 24px;border-bottom:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;">
+      <% const newCount      = enquiries.filter(e => e.status === 'new').length; %>
+      <% const readCount     = enquiries.filter(e => e.status === 'read').length; %>
+      <% const resolvedCount = enquiries.filter(e => e.status === 'resolved').length; %>
+      <span class="status-badge status-new"><%= newCount %> new</span>
+      <span class="status-badge status-read"><%= readCount %> read</span>
+      <span class="status-badge status-resolved"><%= resolvedCount %> resolved</span>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Sender</th>
+            <th>Subject</th>
+            <th>Message</th>
+            <th>Received</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% enquiries.forEach(enq => { %>
+            <tr>
+              <td>
+                <strong><%= enq.name %></strong>
+                <div style="font-size:0.8rem;color:var(--text-muted);"><%= enq.email %></div>
+              </td>
+              <td style="font-size:0.875rem;font-weight:500;"><%= enq.subject %></td>
+              <td style="font-size:0.875rem;max-width:260px;color:var(--text-muted);">
+                <span title="<%= enq.message %>">
+                  <%= enq.message.length > 90 ? enq.message.substring(0, 90) + '…' : enq.message %>
+                </span>
+              </td>
+              <td style="font-size:0.8rem;white-space:nowrap;color:var(--text-muted);">
+                <%= new Date(enq.createdAt).toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'}) %>
+              </td>
+              <td><span class="status-badge status-<%= enq.status %>"><%= enq.status %></span></td>
+              <td>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+                  <form action="/admin/enquiries/<%= enq._id %>/status" method="POST" style="display:flex;gap:6px;">
+                    <select name="status" class="filter-select" style="font-size:0.8rem;padding:5px 8px;">
+                      <option value="new"      <%= enq.status==='new'      ?'selected':'' %>>New</option>
+                      <option value="read"     <%= enq.status==='read'     ?'selected':'' %>>Read</option>
+                      <option value="resolved" <%= enq.status==='resolved' ?'selected':'' %>>Resolved</option>
+                    </select>
+                    <button type="submit" class="btn btn-outline btn-sm">Update</button>
+                  </form>
+                  <form action="/admin/enquiries/<%= enq._id %>/delete" method="POST"
+                        onsubmit="return confirm('Delete this enquiry?')">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/admin-footer') %>
