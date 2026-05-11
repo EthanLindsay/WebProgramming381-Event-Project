@@ -1,0 +1,70 @@
+# EventHub — REST API test requests
+# Use with the VS Code REST Client extension (humao.rest-client)
+# Make sure the server is running: npm run dev
+
+@base = http://localhost:3000/api
+
+### ─── EVENTS ──────────────────────────────────────────────────────
+
+### Get all events (public)
+GET {{base}}/events
+Content-Type: application/json
+
+###
+
+### Get a single event by ID (replace ID below after running GET all events)
+GET {{base}}/events/REPLACE_WITH_EVENT_ID
+Content-Type: application/json
+
+###
+
+### Create a new event (admin only — you must be logged in as admin via the browser first,
+###   or use a tool that shares session cookies, e.g. REST Client with cookie support)
+POST {{base}}/events
+Content-Type: application/json
+
+{
+  "title": "API Test Event",
+  "description": "Created via REST Client for testing purposes.",
+  "category": "Workshop",
+  "date": "2026-10-10",
+  "time": "09:00",
+  "location": "Online",
+  "price": 0,
+  "capacity": 100
+}
+
+###
+
+### Update an event (admin only)
+PUT {{base}}/events/REPLACE_WITH_EVENT_ID
+Content-Type: application/json
+
+{
+  "title": "Updated Event Title",
+  "price": 500
+}
+
+###
+
+### Delete an event (admin only)
+DELETE {{base}}/events/REPLACE_WITH_EVENT_ID
+Content-Type: application/json
+
+###
+
+### ─── BOOKINGS ───────────────────────────────────────────────────
+
+### Get bookings (user sees their own; admin sees all — requires active session)
+GET {{base}}/bookings
+Content-Type: application/json
+
+###
+
+### ─── CONTACTS ───────────────────────────────────────────────────
+
+### Get all enquiries (admin only — requires active session)
+GET {{base}}/contacts
+Content-Type: application/json
+
+###
