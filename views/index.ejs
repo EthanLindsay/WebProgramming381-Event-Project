@@ -1,0 +1,157 @@
+<%- include('partials/header') %>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container hero-inner">
+    <span class="hero-label">Advanced Events (Pty) Ltd</span>
+    <h1>Discover &amp; Book<br/>Extraordinary Events</h1>
+    <p>Corporate conferences, workshops, music festivals and private experiences — all in one place.</p>
+    <form class="hero-search" action="/events" method="GET">
+      <% if (query.category)     { %><input type="hidden" name="category"     value="<%= query.category %>" /><% } %>
+      <% if (query.date)         { %><input type="hidden" name="date"         value="<%= query.date %>" /><% } %>
+      <% if (query.availability) { %><input type="hidden" name="availability" value="<%= query.availability %>" /><% } %>
+      <input type="text" name="search" value="<%= query.search || '' %>"
+        placeholder="Search by event name or location..." autocomplete="off" />
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+  </div>
+</section>
+
+<!-- Stats strip -->
+<div class="home-stats-strip">
+  <div class="container home-stats-inner">
+    <div class="home-stat">
+      <div class="home-stat-value"><%= events.length %></div>
+      <div class="home-stat-label">Events Available</div>
+    </div>
+    <div class="home-stat-divider"></div>
+    <div class="home-stat">
+      <div class="home-stat-value"><%= categories.length %></div>
+      <div class="home-stat-label">Categories</div>
+    </div>
+    <div class="home-stat-divider"></div>
+    <div class="home-stat">
+      <div class="home-stat-value">100%</div>
+      <div class="home-stat-label">Online Booking</div>
+    </div>
+    <div class="home-stat-divider"></div>
+    <div class="home-stat">
+      <div class="home-stat-value">ZA</div>
+      <div class="home-stat-label">South Africa</div>
+    </div>
+  </div>
+</div>
+
+<!-- Category chips -->
+<div class="category-chips-bar">
+  <div class="container">
+    <div class="category-chips">
+      <a href="/events" class="category-chip <%= !query.category || query.category === 'all' ? 'active' : '' %>">All</a>
+      <% categories.forEach(cat => { %>
+        <a href="/events?category=<%= cat %><%= query.search ? '&search=' + query.search : '' %>"
+           class="category-chip badge-<%= cat.toLowerCase() %> <%= query.category === cat ? 'active' : '' %>">
+          <%= cat %>
+        </a>
+      <% }) %>
+    </div>
+  </div>
+</div>
+
+<!-- Filter bar (date + availability) -->
+<div class="filter-bar">
+  <div class="container">
+    <form class="filter-inner" action="/events" method="GET">
+      <% if (query.search)   { %><input type="hidden" name="search"   value="<%= query.search %>" /><% } %>
+      <% if (query.category) { %><input type="hidden" name="category" value="<%= query.category %>" /><% } %>
+
+      <span class="filter-label">Filter:</span>
+
+      <input type="date" name="date" value="<%= query.date || '' %>"
+        class="filter-select" onchange="this.form.submit()" />
+
+      <select name="availability" class="filter-select" onchange="this.form.submit()">
+        <option value=""          <%= !query.availability               ?'selected':'' %>>All Events</option>
+        <option value="available" <%= query.availability==='available'  ?'selected':'' %>>Available Only</option>
+      </select>
+
+      <% if (query.search || query.category || query.date || query.availability) { %>
+        <a href="/events" class="btn btn-outline btn-sm">Clear</a>
+      <% } %>
+
+      <span class="results-count"><%= events.length %> event<%= events.length!==1?'s':'' %> found</span>
+    </form>
+  </div>
+</div>
+
+<!-- Event listing -->
+<section class="section">
+  <div class="container">
+
+    <% if (events.length === 0) { %>
+      <div class="empty-state">
+        <div class="empty-state-icon"></div>
+        <h3>No events found</h3>
+        <p>Try adjusting your search or filters to find what you're looking for.</p>
+        <a href="/events" class="btn btn-primary">View All Events</a>
+      </div>
+
+    <% } else { %>
+      <div class="events-grid">
+        <% events.forEach(event => { %>
+          <article class="event-card">
+
+            <div class="event-card-image">
+              <img src="<%= event.image %>" alt="<%= event.title %>" />
+              <span class="event-category-badge badge-<%= event.category.toLowerCase() %>">
+                <%= event.category %>
+              </span>
+              <!-- Date stamp overlay -->
+              <div class="event-date-stamp">
+                <span class="event-date-day"><%= new Date(event.date).getDate() %></span>
+                <span class="event-date-month"><%= new Date(event.date).toLocaleDateString('en-ZA',{month:'short'}) %></span>
+              </div>
+            </div>
+
+            <div class="event-card-body">
+              <h2 class="event-card-title"><%= event.title %></h2>
+              <div class="event-meta">
+                <div class="event-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                    <circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7.1 11.5 7.7 12 .2.2.4.3.6.3s.4-.1.6-.3C13.5 21.5 20 15.4 20 10a8 8 0 0 0-8-8z"/>
+                  </svg>
+                  <span><%= event.location %></span>
+                </div>
+                <div class="event-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  <span><%= event.time %></span>
+                </div>
+              </div>
+
+              <div class="event-card-footer">
+                <div>
+                  <div class="event-price <%= event.price===0?'event-price-free':'' %>">
+                    <%= event.price===0 ? 'Free' : 'R ' + event.price.toFixed(2) %>
+                  </div>
+                  <% if (event.isSoldOut) { %>
+                    <span class="availability-badge soldout">Sold Out</span>
+                  <% } else if (event.availableTickets <= 10) { %>
+                    <span class="availability-badge low-stock"><%= event.availableTickets %> left</span>
+                  <% } else { %>
+                    <span class="availability-badge available">Available</span>
+                  <% } %>
+                </div>
+                <a href="/events/<%= event._id %>" class="btn btn-primary btn-sm">View Details</a>
+              </div>
+            </div>
+
+          </article>
+        <% }) %>
+      </div>
+    <% } %>
+
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,15 @@
+<%- include('partials/header') %>
+
+<div class="error-page">
+  <div style="max-width: 480px; padding: 24px;">
+    <div class="error-code"><%= statusCode %></div>
+    <h2 style="margin-bottom:12px;"><%= title %></h2>
+    <p class="error-message"><%= message %></p>
+    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+      <a href="/events" class="btn btn-primary">Back to Events</a>
+      <a href="javascript:history.back()" class="btn btn-outline">Go Back</a>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
