@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %> | EventHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<header class="navbar">
+  <div class="container navbar-inner">
+
+    <a href="/events" class="navbar-brand">Event<span>Hub</span></a>
+
+    <nav class="navbar-links" id="navLinks">
+      <a href="/events"  class="<%= currentPath === '/events'  ? 'nav-active' : '' %>">Events</a>
+      <a href="/contact" class="<%= currentPath === '/contact' ? 'nav-active' : '' %>">Contact</a>
+
+      <% if (user) { %>
+        <% if (user.role === 'admin') { %>
+          <a href="/admin/dashboard" class="<%= currentPath.startsWith('/admin') ? 'nav-active' : '' %>">Admin Panel</a>
+        <% } else { %>
+          <a href="/bookings/dashboard" class="<%= currentPath.startsWith('/bookings') ? 'nav-active' : '' %>">My Bookings</a>
+        <% } %>
+
+        <%/* User identity pill */%>
+        <div class="navbar-user">
+          <div class="navbar-avatar-sm"><%= user.name.charAt(0).toUpperCase() %></div>
+          <span class="navbar-user-name"><%= user.name.split(' ')[0] %></span>
+        </div>
+
+        <a href="/auth/logout" class="btn btn-outline btn-sm">Logout</a>
+      <% } else { %>
+        <a href="/auth/login"    class="btn btn-outline btn-sm">Login</a>
+        <a href="/auth/register" class="btn btn-primary  btn-sm">Register</a>
+      <% } %>
+    </nav>
+
+    <button class="navbar-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+  </div>
+</header>
+
+<main>
