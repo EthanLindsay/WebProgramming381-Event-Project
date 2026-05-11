@@ -1,0 +1,87 @@
+<%- include('../partials/header') %>
+
+<div class="page-header">
+  <div class="container">
+    <h1>Contact Us</h1>
+    <p>Have a question? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="container">
+    <div class="contact-grid">
+
+      <!-- Contact Form -->
+      <div>
+        <% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+        <% if (error)   { %><div class="alert alert-error"><%= error %></div><% } %>
+
+        <div class="inline-form">
+          <h2 class="inline-form-title">Send an Enquiry</h2>
+          <form action="/contact" method="POST" novalidate>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Your Name</label>
+                <input type="text" name="name" class="form-input" required placeholder="Jane Smith" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" name="email" class="form-input" required placeholder="you@example.com" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Subject</label>
+              <input type="text" name="subject" class="form-input" required placeholder="e.g. Event sponsorship enquiry" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Message</label>
+              <textarea name="message" class="form-input" required rows="6"
+                placeholder="Write your message here..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg">Send Message</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Company Info -->
+      <div class="contact-info">
+        <h3>Get in Touch</h3>
+        <p>
+          Advanced Events (Pty) Ltd is your trusted partner for world-class corporate
+          conferences, workshops, music festivals and private experiences across South Africa.
+        </p>
+
+        <div class="event-info-card">
+          <div class="contact-info-item event-info-row">
+            <span class="contact-info-item-label event-info-key">Address</span>
+            <span class="contact-info-item-val event-info-val">123 Event Street, Sandton, Johannesburg, 2196</span>
+          </div>
+          <div class="contact-info-item event-info-row">
+            <span class="contact-info-item-label event-info-key">Email</span>
+            <span class="contact-info-item-val event-info-val">info@advancedevents.co.za</span>
+          </div>
+          <div class="contact-info-item event-info-row">
+            <span class="contact-info-item-label event-info-key">Phone</span>
+            <span class="contact-info-item-val event-info-val">+27 11 000 1234</span>
+          </div>
+          <div class="contact-info-item event-info-row">
+            <span class="contact-info-item-label event-info-key">Hours</span>
+            <span class="contact-info-item-val event-info-val">Mon – Fri, 08:00 – 17:00</span>
+          </div>
+        </div>
+
+        <!-- Placeholder map image -->
+        <div style="width:100%; height:200px; background: linear-gradient(135deg, #e2e8f0, #cbd5e1); border-radius: var(--radius); margin-top:16px; overflow:hidden;">
+          <img src="/images/placeholder.jpg" alt="Map location" style="width:100%; height:100%; object-fit:cover;" />
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

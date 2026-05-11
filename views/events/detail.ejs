@@ -1,0 +1,142 @@
+<%- include('../partials/header') %>
+
+<div class="event-detail">
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="/events">Events</a>
+      <span class="breadcrumb-sep">/</span>
+      <span><%= event.title %></span>
+    </nav>
+
+    <!-- Flash messages -->
+    <% if (error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+    <% if (success) { %>
+      <div class="alert alert-success"><%= success %></div>
+    <% } %>
+
+    <!-- Event image -->
+    <div class="event-detail-image">
+      <img src="<%= event.image %>" alt="<%= event.title %>" />
+    </div>
+
+    <div class="event-detail-grid">
+
+      <!-- Left: event info -->
+      <div class="event-detail-main">
+        <span class="event-category-badge badge-<%= event.category.toLowerCase() %>" style="position:static; margin-bottom:12px; display:inline-block;">
+          <%= event.category %>
+        </span>
+        <h1 style="margin-bottom:16px;"><%= event.title %></h1>
+        <p style="color: var(--text-muted); line-height:1.8; font-size:1.0625rem;"><%= event.description %></p>
+
+        <div class="event-info-card" style="margin-top:32px;">
+          <div class="event-info-row">
+            <span class="event-info-key">Date</span>
+            <span class="event-info-val">
+              <%= new Date(event.date).toLocaleDateString('en-ZA', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) %>
+            </span>
+          </div>
+          <div class="event-info-row">
+            <span class="event-info-key">Time</span>
+            <span class="event-info-val"><%= event.time %></span>
+          </div>
+          <div class="event-info-row">
+            <span class="event-info-key">Venue</span>
+            <span class="event-info-val"><%= event.location %></span>
+          </div>
+          <div class="event-info-row">
+            <span class="event-info-key">Category</span>
+            <span class="event-info-val"><%= event.category %></span>
+          </div>
+          <div class="event-info-row">
+            <span class="event-info-key">Price</span>
+            <span class="event-info-val" style="font-weight:700; color: var(--accent);">
+              <%= event.price === 0 ? 'Free' : 'R ' + event.price.toFixed(2) + ' per ticket' %>
+            </span>
+          </div>
+          <div class="event-info-row">
+            <span class="event-info-key">Capacity</span>
+            <span class="event-info-val">
+              <%= event.bookedCount %> / <%= event.capacity %> booked
+              <!-- Visual progress bar showing how full the event is -->
+              <div class="capacity-bar">
+                <% const pct = Math.round((event.bookedCount / event.capacity) * 100); %>
+                <div class="capacity-fill <%= pct < 50 ? 'low' : pct < 80 ? 'medium' : 'high' %>"
+                     style="width:<%= pct %>%"></div>
+              </div>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: booking panel -->
+      <div class="event-detail-sidebar">
+        <div class="booking-card">
+
+          <% if (event.isSoldOut) { %>
+            <h3>Sold Out</h3>
+            <p style="color:var(--text-muted); margin-top:8px;">
+              All tickets for this event have been booked. Check back later or browse other events.
+            </p>
+            <a href="/events" class="btn btn-outline btn-full" style="margin-top:20px;">Browse Events</a>
+
+          <% } else if (!user) { %>
+            <h3>Book Tickets</h3>
+            <p style="color:var(--text-muted); margin-top:8px; margin-bottom:20px;">
+              Sign in to your account to book tickets for this event.
+            </p>
+            <a href="/auth/login"    class="btn btn-primary btn-full" style="margin-bottom:10px;">Sign In</a>
+            <a href="/auth/register" class="btn btn-outline btn-full">Create Account</a>
+
+          <% } else { %>
+            <h3>Book Tickets</h3>
+            <p style="color:var(--text-muted); font-size:0.875rem; margin: 8px 0 20px;">
+              <%= event.availableTickets %> ticket<%= event.availableTickets !== 1 ? 's' : '' %> remaining
+            </p>
+
+            <form action="/bookings" method="POST" id="bookingForm">
+              <input type="hidden" name="eventId" value="<%= event._id %>" />
+
+              <div class="form-group">
+                <label for="ticketCount" class="form-label">Number of tickets</label>
+                <select
+                  id="ticketCount" name="ticketCount"
+                  class="form-input"
+                  onchange="updateTotal(this.value)"
+                >
+                  <% for (let i = 1; i <= Math.min(10, event.availableTickets); i++) { %>
+                    <option value="<%= i %>"><%= i %></option>
+                  <% } %>
+                </select>
+              </div>
+
+              <div class="booking-total" id="bookingTotal">
+                <%= event.price === 0 ? 'Free' : 'R ' + event.price.toFixed(2) %>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-full btn-lg">Confirm Booking</button>
+              <p class="booking-note">You can cancel your booking from your dashboard at any time.</p>
+            </form>
+
+            <script>
+              const pricePerTicket = <%= event.price %>;
+              function updateTotal(qty) {
+                const total = pricePerTicket * parseInt(qty);
+                document.getElementById('bookingTotal').textContent =
+                  pricePerTicket === 0 ? 'Free' : 'R ' + total.toFixed(2);
+              }
+            </script>
+          <% } %>
+
+        </div>
+      </div>
+
+    </div><!-- /.event-detail-grid -->
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
