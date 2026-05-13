@@ -13,6 +13,7 @@ const eventSchema = new mongoose.Schema({
   location: { type: String, required: true },
   price:    { type: Number, required: true, min: 0 },
   capacity: { type: Number, required: true, min: 1 },
+  
   // bookedCount is incremented on each confirmed booking and decremented on cancellation
   bookedCount: { type: Number, default: 0, min: 0 },
   image:    { type: String, default: '/images/placeholder.jpg' },
