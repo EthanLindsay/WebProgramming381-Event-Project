@@ -3,6 +3,8 @@ Initial ReadME file
 
 A full-stack web application built for Advanced Events (Pty) Ltd as part of the WPR381 module at Belgium Campus iTversity.
 
+<span style="background-color: #0074D9; color: white; padding: 0.2em 0.4em; border-radius: 3px;">***GITHUB LINK: *** https://github.com/EthanLindsay/WebProgramming381-Event-Project </span>  
+
 ---
 
 ## Project Overview
@@ -41,7 +43,7 @@ EventHub allows users to browse, search and book tickets for events. Administrat
 
 ### Prerequisites
 - Node.js (v18+)
-- MongoDB running a MongoDB Atlas connection string
+- MongoDB running a MongoDB Atlas connection string (Running fulltime on student account.. free plan so limited to 50mb of data but works for the proof of concept)
 
 ### 1. Install dependencies
 ```bash
@@ -57,12 +59,12 @@ MONGO_URI=mongodb:mongodb+srv://602233_db_user:AJI3x0RVAOL2Ozrv@wpr381-eventhub.
 
 ### 3. Seed the database (creates admin + test user + sample events)
 ```bash
-npm run seed
+npm run seed #(Just populates the database with sample data)
 ```
 
 This creates:
-- **Admin account:** `admin@eventhub.co.za` / `Admin@1234`
-- **Test user account:** `user@eventhub.co.za` / `User@1234`
+- **Admin account:** admin@eventhub.co.za / Admin@123
+- **Test user account:** user@eventhub.co.za / User@1234
 - 6 sample events across different categories
 
 ### 4. Start the development server
